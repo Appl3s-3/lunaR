@@ -11,17 +11,17 @@ VertexArray::~VertexArray() {
     glDeleteVertexArrays(1, &array_name);
 }
 
-void VertexArray::bind() {
+void VertexArray::bind() const {
     glBindVertexArray(array_name);
 }
 
-void VertexArray::unbind() {
+void VertexArray::unbind() const {
     glBindVertexArray(0);
 }
 
 void VertexArray::define_attribute(BufferManager buffer,
                                    VertexAttributeInfo info,
-                                   uint64_t offset) {
+                                   uint64_t offset) const {
     // The buffer target is not vertex attributes
     if (buffer.target() != GL_ARRAY_BUFFER) {
         return;

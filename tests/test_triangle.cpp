@@ -12,7 +12,10 @@
 //     luna::OpenGlErrorCallback error = luna::OpenGlErrorCallback(source, type, id, severity, message);
 //     error.log();
 // }
-
+int main(int argc, char** argv) {
+    return 0;
+}
+/*
 int main(int argc, char** argv) {
     // Position vertices for an isoceles triangle
     float position_vertices[] = {
@@ -94,3 +97,5 @@ int main(int argc, char** argv) {
     
     return 0;
 }
+
+*/

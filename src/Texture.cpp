@@ -11,6 +11,17 @@ Texture::~Texture() {
     glDeleteTextures(1, &name);
 }
 
+void bind() const { 
+    glActiveTexture(unit);
+    glBindTexture(GL_TEXTURE_2D, name);
+}
+
+void unbind() const {
+    glActiveTexture(unit);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+// invalid atm
 void Texture::allocate(GLsizei width, GLsizei height, uint32_t channels) const {
     bind();
 
@@ -33,7 +44,17 @@ void Texture::allocate(GLsizei width, GLsizei height, uint32_t channels) const {
         format = GL_RGB;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 800,
+                 600,
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 NULL);
+    
+    unbind();
 }
 
 void Texture::from_qoi(std::string filename) const {
@@ -45,21 +66,21 @@ void Texture::from_qoi(std::string filename) const {
         std::cout << "Failed to load image from the location: " << filename << std::endl;
     }
 
-    GLint internalformat;
+    GLint internal_format;
     GLenum format;
 
     switch (image_desc.channels) {
     case 3:
-        internalformat = GL_RGB;
+        internal_format = GL_RGB;
         format = GL_RGB;
         break;
     case 4:
-        internalformat = GL_RGBA;
+        internal_format = GL_RGBA;
         format = GL_RGBA;
         break;
     default:
         std::cout << "Unknown amount of channels in QOI file while reading texture. Channels: " << image_desc.channels << std::endl;
-        internalformat = GL_RGBA;
+        internal_format = GL_RGBA;
         format = GL_RGBA;
     }
 
@@ -72,8 +93,17 @@ void Texture::from_qoi(std::string filename) const {
     * data:           A pointer to the data.
     */
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalformat, image_desc.width, image_desc.height, 0, format, GL_UNSIGNED_BYTE, image_bytes);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 internal_format,
+                 image_desc.width,
+                 image_desc.height,
+                 0,
+                 format,
+                 GL_UNSIGNED_BYTE,
+                 image_bytes);
     free(image_bytes);
+    unbind();
 }
 
 // void Texture::set_unit_from_file(const char *filename, int32_t width, int32_t height, const uint32_t texture_unit, const GLint internalformat, const GLenum format, const GLenum type, int32_t channels) {  
@@ -127,6 +157,7 @@ void Texture::mipmap(const GLint minify_filter, const GLint magnify_filter) cons
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify_filter);
     glGenerateMipmap(GL_TEXTURE_2D);
+    unbind();
 }
 
 void Texture::wrap(const GLint wrap_s, const GLint wrap_t) const {
@@ -137,4 +168,5 @@ void Texture::wrap(const GLint wrap_s, const GLint wrap_t) const {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, wrap_r);
+    unbind();
 }

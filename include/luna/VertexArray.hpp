@@ -34,12 +34,14 @@ public:
     VertexArray();
     ~VertexArray();
 
-    void bind();
-    void unbind();
+    void bind() const;
+
+    // TODO: maybe make static
+    void unbind() const;
 
     void define_attribute(BufferManager buffer,
                           VertexAttributeInfo info,
-                          uint64_t offset);
+                          uint64_t offset) const;
     
     // Draw using DrawArrays
     void draw_arrays(GLenum mode, GLint first, GLsizei count) const;

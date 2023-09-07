@@ -13,11 +13,11 @@ BufferManager::~BufferManager() {
     glDeleteBuffers(1, &buffer_name); // TODO
 }
 
-void BufferManager::bind() {
+void BufferManager::bind() const {
     glBindBuffer(buffer_target, buffer_name);
 }
 
-void BufferManager::unbind() {
+void BufferManager::unbind() const {
     glBindBuffer(buffer_target, 0);
 }
 
@@ -40,7 +40,7 @@ void BufferManager::reserve(GLsizeiptr size) {
     capacity = size;
 }
 
-void BufferManager::upload(GLintptr offset, GLsizeiptr size, const void* data) {
+void BufferManager::upload(GLintptr offset, GLsizeiptr size, const void* data) const {
     if ((offset + size) > capacity) {
         return;
     }

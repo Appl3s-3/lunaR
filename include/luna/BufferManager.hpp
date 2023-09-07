@@ -11,8 +11,8 @@ public:
                   GLenum buffer_usage = GL_STATIC_DRAW);
     ~BufferManager();
 
-    void bind();
-    void unbind();
+    void bind() const;
+    void unbind() const;
 
     GLuint name() const;
     GLenum target() const;
@@ -20,7 +20,7 @@ public:
     void reserve(GLsizeiptr size);
     void upload(GLintptr offset,
                 GLsizeiptr size,
-                const void* data);
+                const void* data) const;
 
 private:
     GLuint buffer_name = 0;

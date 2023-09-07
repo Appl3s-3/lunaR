@@ -5,9 +5,7 @@
 #include "Window.hpp"
 #include "LunaDefines.hpp"
 
-#include "VertexAttribute.hpp"
-#include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
+#include "BufferManager.hpp"
 #include "VertexArray.hpp"
 
 #include "Shader.hpp"
