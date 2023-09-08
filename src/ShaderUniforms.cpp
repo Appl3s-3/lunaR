@@ -1,4 +1,4 @@
-#include "ShaderUniforms.hpp"
+#include "luna/ShaderUniforms.hpp"
 
 using namespace luna;
 

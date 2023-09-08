@@ -20,12 +20,17 @@ add_library(luna STATIC "")
 target_sources(luna
     PRIVATE
     "${LUNA_SOURCE_DIR}/Window.cpp"
+    "${LUNA_SOURCE_DIR}/Input.cpp"
+    "${LUNA_SOURCE_DIR}/Keyboard.cpp"
+    "${LUNA_SOURCE_DIR}/Mouse.cpp"
+    "${LUNA_SOURCE_DIR}/Error.cpp"
     
     "${LUNA_SOURCE_DIR}/BufferManager.cpp"
     "${LUNA_SOURCE_DIR}/VertexArray.cpp"
 
     "${LUNA_SOURCE_DIR}/Shader.cpp"
     "${LUNA_SOURCE_DIR}/ShaderProgram.cpp"
+    "${LUNA_SOURCE_DIR}/ShaderUniforms.cpp"
 )
 
 target_include_directories(luna

@@ -26,6 +26,9 @@ Window::Window(uint32_t width, uint32_t height, std::string _title, uint32_t maj
     // Enable debug context
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
+    // TODO: remove
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
     window = glfwCreateWindow(dimensions.x, dimensions.y, title.c_str(), NULL, NULL);
     if (window == NULL) {
         std::cout << LUNA_FATAL_ERROR "Failed to instantiate GLFW3 window." << std::endl;

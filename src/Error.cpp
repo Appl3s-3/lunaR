@@ -1,4 +1,4 @@
-#include "Error.hpp"
+#include "luna/Error.hpp"
 
 using namespace luna;
 
@@ -10,7 +10,7 @@ OpenGlErrorCallback::OpenGlErrorCallback(GLenum _source, GLenum _type, GLuint _i
 }
 
 void OpenGlErrorCallback::log() {
-    std::cerr << "Source: " + source + ", Type: " + type + ", Id: " << id << ", Severity: " + severity
+    std::cout << "Source: " + source + ", Type: " + type + ", Id: " << id << ", Severity: " + severity
             + "\nMessage: " + message << std::endl;
 }
 

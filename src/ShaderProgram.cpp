@@ -58,3 +58,7 @@ void ShaderProgram::unbind() const {
     glUseProgram(0);
 }
 
+GLuint ShaderProgram::name() const {
+    return program_name;
+}
+

@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "luna/miniGL.h"
 #include "luna/Window.hpp"
@@ -13,6 +14,16 @@
 
 #include "luna/Shader.hpp"
 #include "luna/ShaderProgram.hpp"
+#include "luna/ShaderUniforms.hpp"
+
+#include "luna/Input.hpp"
+#include "luna/Error.hpp"
+
+void GLAPIENTRY open_gl_error_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+void GLAPIENTRY open_gl_error_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+    luna::OpenGlErrorCallback error = luna::OpenGlErrorCallback(source, type, id, severity, message);
+    error.log();
+}
 
 enum class Tile {
     Empty,
@@ -28,6 +39,7 @@ public:
     void play_move(int row, int column);
     bool fully_bricked();
     Tile active_player_tile();
+    std::vector<uint8_t> generate_colours();
 
     bool terminated = false;
     char active_player = 0;
@@ -69,7 +81,7 @@ void Bricker::play_move(int row, int column) {
             }
 
             // Place a brick
-            board[i * 5 + j] = Tile::Brick;
+            board[brick_row * 5 + brick_column] = Tile::Brick;
         }
     }
 
@@ -78,6 +90,18 @@ void Bricker::play_move(int row, int column) {
 
     // Swap the player
     active_player = !active_player;
+
+    // std::cout << "board after move ";
+    // for (int i = 0; i < 25; ++i) {
+    //     switch (board[i]) {
+    //     case Tile::Empty:
+    //         std::cout << "E";
+    //         break;
+    //     default:
+    //         std::cout << " ";
+    //     }
+    // }
+    // std::cout << std::endl;
 }
 
 bool Bricker::fully_bricked() {
@@ -97,6 +121,56 @@ Tile Bricker::active_player_tile() {
     case 1:
         return Tile::Nought;
     }
+    return Tile::Cross;
+}
+
+std::vector<uint8_t> Bricker::generate_colours() {
+    std::vector<uint8_t> colours;
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 5; ++j) {
+            switch (board[i * 5 + j]) {
+            case Tile::Empty: {
+                for (int k = 0; k < 4; ++k) {
+                    colours.push_back(50);
+                    colours.push_back(50);
+                    colours.push_back(50);
+                    colours.push_back(255);
+                }
+                break;
+            }
+            case Tile::Brick: {
+                for (int k = 0; k < 4; ++k) {
+                    colours.push_back(230);
+                    colours.push_back(230);
+                    colours.push_back(230);
+                    colours.push_back(255);
+                }
+                break;
+            }
+            case Tile::Cross: {
+                for (int k = 0; k < 4; ++k) {
+                    colours.push_back(200);
+                    colours.push_back(50);
+                    colours.push_back(50);
+                    colours.push_back(255);
+                }
+                break;
+            }
+            case Tile::Nought: {
+                for (int k = 0; k < 4; ++k) {
+                    colours.push_back(50);
+                    colours.push_back(50);
+                    colours.push_back(200);
+                    colours.push_back(255);
+                }
+                break;
+            }
+            }
+        }
+    }
+
+    return colours;
 }
 
 /*
@@ -184,6 +258,7 @@ int main(int argc, char** argv) {
                 grid_vertex_colours.push_back(50);
                 grid_vertex_colours.push_back(50);
                 grid_vertex_colours.push_back(50);
+                grid_vertex_colours.push_back(50);
             }
         }
     }
@@ -196,12 +271,15 @@ int main(int argc, char** argv) {
 
     luna::VertexAttributeInfo colour_info;
     colour_info.index = 1;
-    colour_info.size = 3;
+    colour_info.size = 4;
     colour_info.type = luna::DataType::UChar;
     colour_info.normalized = GL_TRUE;
 
     luna::Initiate();
     luna::Window window = luna::Window(800, 800, "Bricker");
+    
+    luna::Input input = luna::Input(window);
+
 
     // vbos
     luna::BufferManager position_buffer = luna::BufferManager(GL_ARRAY_BUFFER);
@@ -210,8 +288,8 @@ int main(int argc, char** argv) {
                            grid_vertex_positions.size() * sizeof(float),
                            grid_vertex_positions.data());
 
-    luna::BufferManager colour_buffer = luna::BufferManager(GL_ARRAY_BUFFER);
-    colour_buffer.reserve((25 * 4) * (3 * sizeof(uint8_t)));
+    luna::BufferManager colour_buffer = luna::BufferManager(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
+    colour_buffer.reserve((25 * 4) * (4 * sizeof(uint8_t)));
     colour_buffer.upload(0,
                          grid_vertex_colours.size() * sizeof(uint8_t),
                          grid_vertex_colours.data());
@@ -230,19 +308,21 @@ int main(int argc, char** argv) {
     // bind the ibo the the vao
     bricker_vao.bind();
     indices_buffer.bind();
-    bricker_vao.unbind();
+    //bricker_vao.unbind();
 
     // shaders
-    std::ifstream vertex_shader_file_stream = std::ifstream("../shaders/tests/triangle.vs");
+    // reading files
+    std::ifstream vertex_shader_file_stream = std::ifstream("../shaders/tests/bricker.vs");
     std::stringstream vertex_shader_stream;
     vertex_shader_stream << vertex_shader_file_stream.rdbuf();
     std::string vertex_shader_body = vertex_shader_stream.str();
 
-    std::ifstream fragment_shader_file_stream = std::ifstream("../shaders/tests/triangle.fs");
+    std::ifstream fragment_shader_file_stream = std::ifstream("../shaders/tests/bricker.fs");
     std::stringstream fragment_shader_stream;
     fragment_shader_stream << fragment_shader_file_stream.rdbuf();
     std::string fragment_shader_body = fragment_shader_stream.str();
 
+    // shader generation
     luna::Shader bricker_vs = luna::Shader(luna::ShaderType::VERTEX);
     bricker_vs.append_source(vertex_shader_body);
     bricker_vs.compile();
@@ -251,6 +331,7 @@ int main(int argc, char** argv) {
     bricker_fs.append_source(fragment_shader_body);
     bricker_fs.compile();
 
+    // shader program
     luna::ShaderProgram bricker_program = luna::ShaderProgram();
     bricker_program.attach_shader(bricker_vs);
     bricker_program.attach_shader(bricker_fs);
@@ -258,16 +339,95 @@ int main(int argc, char** argv) {
 
     window.clear_colour(0.12, 0.12, 0.12);
 
+    double time = 0;
+
+    // setup
+    int row_click = 0;
+    int column_click = 0;
+
+    luna::ShaderUniforms uniforms = luna::ShaderUniforms(bricker_program.name());
+    uniforms.add_uniform("cell_colour");
+    uniforms.set_f3("cell_colour", glm::vec3(50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f));
+
+
+    // glEnable(GL_DEBUG_OUTPUT);
+    // glDebugMessageCallback(open_gl_error_callback, 0);
+
     // draw the grid
     while (window.not_closed() == true) {
+        time += 0.01;
+        // Process
         window.poll();
-        
+        input.process();
+
+        if (input.mouse.button_down[0] == true) {
+            if ((input.mouse.position_x > (800 * 0.1)) && (input.mouse.position_x < 800 - (800 * 0.1))
+            &&  (input.mouse.position_y > (800 * 0.1)) && (input.mouse.position_y < 800 - (800 * 0.1))) {
+                row_click = (input.mouse.position_y - (800 * 0.1)) * (5.0 / (0.8 * 800.0));
+                column_click = (input.mouse.position_x - (800 * 0.1)) * (5.0 / (0.8 * 800.0));
+                // std::cout << "Click at " << input.mouse.position_x << " " << input.mouse.position_y << std::endl;
+                // std::cout << "Ids at " << row_click << " " << column_click << std::endl;
+                game.play_move(row_click, column_click);
+                // grid_vertex_colours = game.generate_colours();
+
+                // for (int i = 0; i < 100; ++i) {
+                //     if ((i + 1) % 4 == 0) continue;
+                //     std::cout << (int)grid_vertex_colours[i] << " ";
+                // }
+                // std::cout << std::endl;
+                
+
+                // position_buffer.reserve((grid_vertex_positions.size() - 4) * sizeof(uint8_t));
+                // position_buffer.upload(0,
+                //                        (grid_vertex_positions.size() - 4) * sizeof(uint8_t),
+                //                        grid_vertex_positions.data());
+
+                // colour_buffer.bind();
+                // glBufferSubData(GL_ARRAY_BUFFER, 0, grid_vertex_colours.size() * sizeof(uint8_t), grid_vertex_colours.data());
+
+                // colour_buffer.reserve(grid_vertex_colours.size() * sizeof(uint8_t));
+                // colour_buffer.upload(0,
+                //                      grid_vertex_colours.size() * sizeof(uint8_t),
+                //                      grid_vertex_colours.data());
+            }
+        }
+
+        if (input.mouse.button_down[1] == true) {
+            // std::cout << "Right click at " << input.mouse.position_x << " " << input.mouse.position_y << std::endl;
+        }
+
+        // Draw
+        // window.clear_colour(sin(time), 0.12, 0.12);
+
         window.clear();
 
         bricker_program.bind();
         bricker_vao.bind();
-        glDrawElements(GL_TRIANGLES, grid_indices.size(), GL_UNSIGNED_INT, 0);
+        for (int i = 0; i < 25; ++i) {
+            switch (game.board[i]) {
+            case Tile::Empty:
+                uniforms.set_f3("cell_colour", glm::vec3(50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f));
+                break;
+            case Tile::Brick:
+                uniforms.set_f3("cell_colour", glm::vec3(230.0f / 255.0f, 230.0f / 255.0f, 230.0f / 255.0f));
+                break;
+            case Tile::Cross:
+                uniforms.set_f3("cell_colour", glm::vec3(200.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f));
+                break;
+            case Tile::Nought:
+                uniforms.set_f3("cell_colour", glm::vec3(50.0f / 255.0f, 50.0f / 255.0f, 200.0f / 255.0f));
+                break;
+            }
+            // glDrawElements(GL_TRIANGLES, /*((sin(time) + 1.0) / 2.0) * */grid_indices.size(), GL_UNSIGNED_INT, 0);
+            // glDrawRangeElements(GL_TRIANGLES, i * 6, grid_indices.size(), 6, GL_UNSIGNED_INT, NULL);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const void*)(i * 6 * sizeof(uint32_t)));
+            // glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL, i * 6);
+        }
 
+        bricker_program.unbind();
+        bricker_vao.unbind();
+
+        // Swap buffers
         window.swap_buffers();
     }
 

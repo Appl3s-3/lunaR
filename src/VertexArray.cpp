@@ -30,13 +30,13 @@ void VertexArray::define_attribute(BufferManager buffer,
     bind();
     buffer.bind();
 
+    glEnableVertexAttribArray(info.index);
     glVertexAttribPointer(info.index,
                           info.size,
                           datatype_type(info.type),
                           info.normalized,
                           info.stride,
                           (const void*)(offset));
-    glEnableVertexAttribArray(info.index);
 
     unbind();
     buffer.unbind();

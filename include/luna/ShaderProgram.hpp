@@ -25,6 +25,8 @@ public:
     void bind() const;
     void unbind() const;
 
+    GLuint name() const;
+
     // ShaderUniforms uniforms;
 
 private:
