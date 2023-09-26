@@ -4,7 +4,6 @@ using namespace luna;
 
 VertexArray::VertexArray() {
     glGenVertexArrays(1, &array_name);
-    bind();
 }
 
 VertexArray::~VertexArray() {
@@ -15,12 +14,12 @@ void VertexArray::bind() const {
     glBindVertexArray(array_name);
 }
 
-void VertexArray::unbind() const {
+void VertexArray::unbind() {
     glBindVertexArray(0);
 }
 
-void VertexArray::define_attribute(BufferManager buffer,
-                                   VertexAttributeInfo info,
+void VertexArray::define_attribute(const BufferManager& buffer,
+                                   const VertexAttributeInfo& info,
                                    uint64_t offset) const {
     // The buffer target is not vertex attributes
     if (buffer.target() != GL_ARRAY_BUFFER) {
@@ -41,6 +40,44 @@ void VertexArray::define_attribute(BufferManager buffer,
     unbind();
     buffer.unbind();
 }
+
+// void VertexArray::do_this_one_thing(const VertexAttributeInfo& info,
+//                                     uint64_t offset) {
+//     bind();
+
+//     glEnableVertexAttribArray(info.index);
+//     // TODO: change stride to offset in vertex attrib info and replace 0
+//     glVertexAttribFormat(info.index,
+//                          info.size,
+//                          datatype_type(info.type),
+//                          info.normalized,
+//                          0);
+//     glVertexAttribBinding(info.index,
+//   	                      info.index);
+//     // glVertexAttribPointer(info.index,
+//     //                       info.size,
+//     //                       datatype_type(info.type),
+//     //                       info.normalized,
+//     //                       info.stride,
+//     //                       (const void*)(offset));
+
+//     unbind();
+// }
+
+// void VertexArray::bind_vbo(const BufferManager& buffer,
+//                            GLuint binding_index,
+//                            GLintptr offset,
+//                            GLsizei stride) {
+//     // The buffer target is not vertex attributes
+//     if (buffer.target() != GL_ARRAY_BUFFER) {
+//         return;
+//     }
+
+//     glBindVertexBuffer(binding_index,
+//                        buffer.name(),
+//                        offset,
+//                        stride);
+// }
 
 void VertexArray::draw_arrays(GLenum mode, GLint first, GLsizei count) const {
     glDrawArrays(mode, first, count);

@@ -13,7 +13,7 @@
 #include "luna/VertexArray.hpp"
 
 #include "luna/Shader.hpp"
-#include "luna/ShaderProgram.hpp"
+#include "luna/Program.hpp"
 #include "luna/ShaderUniforms.hpp"
 
 #include "luna/Input.hpp"
@@ -87,6 +87,13 @@ void Bricker::play_move(int row, int column) {
 
     // Place the player token
     board[row * 5 + column] = active_player_tile();
+
+    // Check for win
+    if (fully_bricked() == true) {
+        for (int i = 0; i < 25; ++i) {
+            board[i] = active_player_tile();
+        }
+    }
 
     // Swap the player
     active_player = !active_player;
@@ -332,7 +339,7 @@ int main(int argc, char** argv) {
     bricker_fs.compile();
 
     // shader program
-    luna::ShaderProgram bricker_program = luna::ShaderProgram();
+    luna::Program bricker_program = luna::Program();
     bricker_program.attach_shader(bricker_vs);
     bricker_program.attach_shader(bricker_fs);
     bricker_program.link();
@@ -393,6 +400,9 @@ int main(int argc, char** argv) {
         }
 
         if (input.mouse.button_down[1] == true) {
+            for (int i = 0; i < 25; ++i) {
+                game.board[i] = Tile::Empty;
+            }
             // std::cout << "Right click at " << input.mouse.position_x << " " << input.mouse.position_y << std::endl;
         }
 
@@ -401,7 +411,7 @@ int main(int argc, char** argv) {
 
         window.clear();
 
-        bricker_program.bind();
+        bricker_program.use();
         bricker_vao.bind();
         for (int i = 0; i < 25; ++i) {
             switch (game.board[i]) {

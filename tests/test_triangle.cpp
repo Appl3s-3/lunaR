@@ -6,7 +6,7 @@
 #include "luna/VertexArray.hpp"
 
 #include "luna/Shader.hpp"
-#include "luna/ShaderProgram.hpp"
+#include "luna/Program.hpp"
 
 // void GLAPIENTRY open_gl_error_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 //     luna::OpenGlErrorCallback error = luna::OpenGlErrorCallback(source, type, id, severity, message);
@@ -69,17 +69,17 @@ int main(int argc, char** argv) {
     triangle_vao.define_attribute(position_buffer, position_info, 0);
     triangle_vao.define_attribute(colour_buffer, colour_info, 0);
 
-    // bind the ibo the the vao
-    triangle_vao.bind();
-    indices_buffer.bind();
+    // use the ibo the the vao
+    triangle_vao.use();
+    indices_buffer.use();
     triangle_vao.unbind();
 
     // shaders
     luna::Shader triangle_vs = luna::Shader(GL_VERTEX_SHADER, "../shaders/tests/triangle.vs");
     luna::Shader triangle_fs = luna::Shader(GL_FRAGMENT_SHADER, "../shaders/tests/triangle.fs");
 
-    luna::ShaderProgram traingle_shader_program = luna::ShaderProgram(triangle_vs, triangle_fs);
-    traingle_shader_program.bind();
+    luna::Program traingle_shader_program = luna::Program(triangle_vs, triangle_fs);
+    traingle_shader_program.use();
 
     window.clear_colour(0.1, 0.1, 0.1);
 
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
         window.poll();
         
         window.clear();
-        triangle_vao.bind();
+        triangle_vao.use();
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         window.swap_buffers();
     }

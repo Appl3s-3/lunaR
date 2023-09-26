@@ -2,26 +2,78 @@
 
 using namespace luna;
 
+Texture::Texture() {
+    glGenTextures(1, &texture_name);
+}
+
 Texture::Texture(const uint32_t unit_number)
-    : unit(GL_TEXTURE0 + unit_number) {
-    glGenTextures(1, &name);
+    : texture_unit(GL_TEXTURE0 + unit_number) {
+    glGenTextures(1, &texture_name);
 }
 
 Texture::~Texture() {
-    glDeleteTextures(1, &name);
+    glDeleteTextures(1, &texture_name);
 }
 
-void bind() const { 
-    glActiveTexture(unit);
-    glBindTexture(GL_TEXTURE_2D, name);
+void Texture::set_texture_unit(const uint32_t unit_number) {
+    texture_unit = GL_TEXTURE0 + unit_number;
 }
 
-void unbind() const {
-    glActiveTexture(unit);
+void Texture::bind() const { 
+    glActiveTexture(texture_unit);
+    glBindTexture(GL_TEXTURE_2D, texture_name);
+}
+
+void Texture::unbind() const {
+    glActiveTexture(texture_unit);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-// invalid atm
+void Texture::reserve(GLsizei width,
+                      GLsizei height,
+                      const ImageFormat& info) {
+    bind();
+
+    glTexImage2D(GL_TEXTURE_2D,
+                 info.level_of_detail,
+                 info.internal_format,
+                 width,
+                 height,
+                 0,
+                 info.format,
+                 info.type,
+                 NULL);
+
+    texture_info = info;
+
+    unbind();
+}
+
+void Texture::upload(GLsizei width,
+            GLsizei height,
+            GLint offset_x,
+            GLint offset_y,
+            const void* data) {
+    bind();
+
+    glTexSubImage2D(GL_TEXTURE_2D,
+                    texture_info.level_of_detail,
+                    offset_x,
+                    offset_y,
+                    texture_info.internal_format,
+                    width,
+                    height,
+                    0,
+                    texture_info.format,
+                    texture_info.type,
+                    data);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    unbind();
+}
+
+/*
 void Texture::allocate(GLsizei width, GLsizei height, uint32_t channels) const {
     bind();
 
@@ -56,55 +108,56 @@ void Texture::allocate(GLsizei width, GLsizei height, uint32_t channels) const {
     
     unbind();
 }
+*/
 
-void Texture::from_qoi(std::string filename) const {
-    bind();
+// void Texture::from_qoi(std::string filename) const {
+//     bind();
 
-    qoi_desc image_desc;
-    void* image_bytes = qoi_read(filename.c_str(), &image_desc, 0);
-    if (image_bytes == NULL) {
-        std::cout << "Failed to load image from the location: " << filename << std::endl;
-    }
+//     qoi_desc image_desc;
+//     void* image_bytes = qoi_read(filename.c_str(), &image_desc, 0);
+//     if (image_bytes == NULL) {
+//         std::cout << "Failed to load image from the location: " << filename << std::endl;
+//     }
 
-    GLint internal_format;
-    GLenum format;
+//     GLint internal_format;
+//     GLenum format;
 
-    switch (image_desc.channels) {
-    case 3:
-        internal_format = GL_RGB;
-        format = GL_RGB;
-        break;
-    case 4:
-        internal_format = GL_RGBA;
-        format = GL_RGBA;
-        break;
-    default:
-        std::cout << "Unknown amount of channels in QOI file while reading texture. Channels: " << image_desc.channels << std::endl;
-        internal_format = GL_RGBA;
-        format = GL_RGBA;
-    }
+//     switch (image_desc.channels) {
+//     case 3:
+//         internal_format = GL_RGB;
+//         format = GL_RGB;
+//         break;
+//     case 4:
+//         internal_format = GL_RGBA;
+//         format = GL_RGBA;
+//         break;
+//     default:
+//         std::cout << "Unknown amount of channels in QOI file while reading texture. Channels: " << image_desc.channels << std::endl;
+//         internal_format = GL_RGBA;
+//         format = GL_RGBA;
+//     }
 
-    /* void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * data);
-    * level:          Level-of-detail, specifying the 'n'th mipmap reduction.
-    * internalformat: View documentation for all avaliable types. Base types {DEPTH_COMPONENT, DEPTH_STENCIL, RED, RG, RGB, RGBA} 
-    * border:         Must be 0.
-    * format:         ({RED, RG, RGB, BGR, RGBA} - []_INTEGER) or {STENCIL_INDEX, DEPTH_COMPONENT, DEPTH_STENCIL}
-    * type:           View documentation for avaliable types. Typical types (UNSIGNED_[] - {BYTE, SHORT, INT}) or {HALF_FLOAT, FLOAT}
-    * data:           A pointer to the data.
-    */
+//     /* void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * data);
+//     * level:          Level-of-detail, specifying the 'n'th mipmap reduction.
+//     * internalformat: View documentation for all avaliable types. Base types {DEPTH_COMPONENT, DEPTH_STENCIL, RED, RG, RGB, RGBA} 
+//     * border:         Must be 0.
+//     * format:         ({RED, RG, RGB, BGR, RGBA} - []_INTEGER) or {STENCIL_INDEX, DEPTH_COMPONENT, DEPTH_STENCIL}
+//     * type:           View documentation for avaliable types. Typical types (UNSIGNED_[] - {BYTE, SHORT, INT}) or {HALF_FLOAT, FLOAT}
+//     * data:           A pointer to the data.
+//     */
 
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 internal_format,
-                 image_desc.width,
-                 image_desc.height,
-                 0,
-                 format,
-                 GL_UNSIGNED_BYTE,
-                 image_bytes);
-    free(image_bytes);
-    unbind();
-}
+//     glTexImage2D(GL_TEXTURE_2D,
+//                  0,
+//                  internal_format,
+//                  image_desc.width,
+//                  image_desc.height,
+//                  0,
+//                  format,
+//                  GL_UNSIGNED_BYTE,
+//                  image_bytes);
+//     free(image_bytes);
+//     unbind();
+// }
 
 // void Texture::set_unit_from_file(const char *filename, int32_t width, int32_t height, const uint32_t texture_unit, const GLint internalformat, const GLenum format, const GLenum type, int32_t channels) {  
 //     if (texture_unit < total_units) {
@@ -143,7 +196,8 @@ void Texture::from_qoi(std::string filename) const {
 //     // TODO: When total units are exceeded
 // }
 
-void Texture::mipmap(const GLint minify_filter, const GLint magnify_filter) const {
+void Texture::set_mipmap_filter(GLint minify_filter,
+                                GLint magnify_filter) const {
     /* GL_NEAREST:           Value/Texture element nearest to the specified coordinate.
      * GL_LINEAR:            Weighted average of four closest values/texture elements.
      * GL_[]_MIPMAP_NEAREST: Chooses the mipmap that most closely matches the size of the pixel.
@@ -160,13 +214,13 @@ void Texture::mipmap(const GLint minify_filter, const GLint magnify_filter) cons
     unbind();
 }
 
-void Texture::wrap(const GLint wrap_s, const GLint wrap_t) const {
+void Texture::set_wrap(const GLint wrap_s,
+                       const GLint wrap_t) const {
     /* Default: GL_REPEAT
      * {GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER, GL_MIRRORED_REPEAT, GL_REPEAT, or GL_MIRROR_CLAMP_TO_EDGE}
      */
     bind();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, wrap_r);
     unbind();
 }

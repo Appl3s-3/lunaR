@@ -26,24 +26,53 @@ struct VertexAttributeInfo {
     GLsizei stride = 0;
 };
 
-/*
- * VertexArray
- */
+// VertexArray
+// Manages an OpenGL Vertex Array Object (VAO)
 class VertexArray {
 public:
+    // VertexArray Constructor
+    // Generates an OpenGL vertex array object
     VertexArray();
+    
+    // VertexArray Destructor
+    // Deletes the vertex array object
     ~VertexArray();
 
+    // bind
+    // Binds the vertex array object
     void bind() const;
 
-    // TODO: maybe make static
-    void unbind() const;
+    // unbind
+    // Unbinds all vertex array objects
+    static void unbind();
 
-    void define_attribute(BufferManager buffer,
-                          VertexAttributeInfo info,
-                          uint64_t offset) const;
+    // name
+    // Returns the reference to the OpenGL vertex array as a GLuint
+    GLuint name() const;
+
+    // define_attribute
+    // Enables a vertex attribute for the vertex array object and binds a
+    // GL_ARRAY_BUFFER to the attribute.
+    // :: const BufferManager&       buffer :: The GL_ARRAY_BUFFER to source
+    //                                         vertex data from
+    // :: const VertexAttributeInfo& info   :: Vertex format information
+    // ::       uint64_t             offset :: Offset (bytes) from...
+    //                                         Defaults to 0
+    void define_attribute(const BufferManager& buffer,
+                          const VertexAttributeInfo& info,
+                          uint64_t offset = 0) const;
+
+    // void do_this_one_thing(const VertexAttributeInfo& info,
+    //                        uint64_t offset = 0);
+
+    // void bind_vbo(const BufferManager& buffer,
+    //               GLuint binding_index,
+    //               GLintptr offset,
+    //               GLsizei stride);
     
+    // draw_arrays
     // Draw using DrawArrays
+
     void draw_arrays(GLenum mode, GLint first, GLsizei count) const;
 
     // Draw the whole vertex array
@@ -60,15 +89,17 @@ public:
     // void vbo_binding(GLuint bindingindex, VertexBuffer vbo_manager, std::size_t attribute_location) const;
 
 private:
+    GLuint array_name;
+
+    // semi-archive
     GLint datatype_size(DataType attribute_type) const;
     GLenum datatype_type(DataType attribute_type) const;
     GLsizei datatype_type_size(DataType attribute_type) const;
     GLboolean datatype_normalized(DataType attribute_type) const;
 
-    GLuint array_name;
     // IndexBuffer* element_buffer = NULL;
 
-    std::unordered_map<GLuint, AttributeInfo> attribute_info;
+    // std::unordered_map<GLuint, AttributeInfo> attribute_info;
 };
 
 } // namespace luna
