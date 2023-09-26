@@ -1,4 +1,4 @@
-#include "Texture.hpp"
+#include "luna/Texture.hpp"
 
 using namespace luna;
 
@@ -55,10 +55,8 @@ void Texture::upload(GLsizei width,
                     texture_info.level_of_detail,
                     offset_x,
                     offset_y,
-                    texture_info.internal_format,
                     width,
                     height,
-                    0,
                     texture_info.format,
                     texture_info.type,
                     data);

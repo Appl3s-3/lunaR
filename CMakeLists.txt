@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 
-project(LunaR VERSION 1.0)
+# https://semver.org/
+project(LunaR VERSION 1.0.0)
 set (CMAKE_CXX_STANDARD 11)
 
 ### Options
@@ -30,6 +31,8 @@ target_sources(luna
 
     "${LUNA_SOURCE_DIR}/Shader.cpp"
     "${LUNA_SOURCE_DIR}/Program.cpp"
+
+    "${LUNA_SOURCE_DIR}/Texture.cpp"
     "${LUNA_SOURCE_DIR}/ShaderUniforms.cpp"
 )
 
@@ -63,7 +66,8 @@ target_link_libraries(luna
     PUBLIC
     glfw
     OpenGL::GL
-    glad)
+    glad
+)
 
 ### End of Dependencies
 
