@@ -14,7 +14,7 @@ void Program::use() const {
     glUseProgram(program_name);
 }
 
-void Program::uninstall() const {
+void Program::uninstall() {
     glUseProgram(0);
 }
 
@@ -30,7 +30,7 @@ void Program::attach_shader(const Shader& shader) const {
     uninstall();
 }
 
-bool Program::link() const {
+GLint Program::link() const {
     use();
 
     glLinkProgram(program_name);
@@ -39,6 +39,8 @@ bool Program::link() const {
     glGetProgramiv(program_name, GL_LINK_STATUS, &success);
 
     uninstall();
+
+    return success;
 }
 
 std::string Program::info_log() const {

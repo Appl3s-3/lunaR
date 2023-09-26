@@ -29,7 +29,7 @@ target_sources(luna
     "${LUNA_SOURCE_DIR}/VertexArray.cpp"
 
     "${LUNA_SOURCE_DIR}/Shader.cpp"
-    "${LUNA_SOURCE_DIR}/ShaderProgram.cpp"
+    "${LUNA_SOURCE_DIR}/Program.cpp"
     "${LUNA_SOURCE_DIR}/ShaderUniforms.cpp"
 )
 

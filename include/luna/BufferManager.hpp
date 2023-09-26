@@ -5,51 +5,66 @@
 
 namespace luna {
 
-// BufferManager
-// Manages a generic OpenGL buffer object
+/**
+ * @brief Manages a generic OpenGL buffer object.
+ */
 class BufferManager {
 public:
-    // BufferManager Constructor
-    // Prepares an OpenGL buffer object for the specified target
-    // :: GLenum buffer_target :: The OpenGL target of the buffer object
-    // :: GLenum buffer_usage  :: How the buffer should be used in draw calls.
-    //                            Default value is GL_STATIC_DRAW
+    /**
+     * @brief Construct a new Buffer Manager object.
+     * Prepares an OpenGL buffer object for the specified target.
+     * @param buffer_target The OpenGL target of the buffer object.
+     * @param buffer_usage  How the buffer should be used in draw calls,
+     *                      defaults to GL_STATIC_DRAW.
+     */
     BufferManager(GLenum buffer_target,
                   GLenum buffer_usage = GL_STATIC_DRAW);
 
-    // BufferManager Destructor
-    // Deletes the buffer
+    /**
+     * @brief Destroy the Buffer Manager object.
+     * Deletes the buffer.
+     */
     ~BufferManager();
 
-    // bind
-    // Binds the OpenGL buffer object to the buffer target
+    /**
+     * @brief Binds the OpenGL buffer object to the buffer target.
+     */
     void bind() const;
 
-    // unbind
-    // Unbinds buffers bound to the buffer target
+    /**
+     * @brief Unbinds buffers bound to the buffer target.
+     */
     void unbind() const;
 
-    // name
-    // Returns the reference to the OpenGL buffer as a GLuint
+    /**
+     * @brief Returns the reference to the OpenGL buffer as a GLuint.
+     * @return GLuint: The reference to the OpenGL buffer.
+     */
     GLuint name() const;
 
-    // target
-    // Returns the stored buffer target
+    /**
+     * @brief Returns the stored buffer target.
+     * @return GLenum: The stored buffer target.
+     */
     GLenum target() const;
 
-    // reserve
-    // Reserves buffer space and relenquishes access to the previous buffer
-    // data. Changes the capacity of the buffer.
-    // :: GLsizeiptr size :: The new size of the buffer in bytes
+    /**
+     * @brief Reserves buffer space.
+     * Reserves buffer space and relenquishes access to the previous buffer
+     * data. Changes the capacity of the buffer.
+     * @param size The new size of the buffer in bytes.
+     */
     void reserve(GLsizeiptr size);
 
-    // upload
-    // Uploads data to the buffer. Fails if offset + size is greater than the
-    // capacity of the buffer.
-    // ::       GLintptr   offset :: Offset (bytes) from the start of the
-    //                               buffer to begin the upload
-    // ::       GLsizeiptr size   :: Size (bytes) to upload to the buffer
-    // :: const void*      data   :: A pointer to the data to upload
+    /**
+     * @brief Uploads data to the buffer.
+     * Uploads data to the buffer. Fails if (offset + size) is greater than
+     * the capacity of the buffer.
+     * @param offset Offset (bytes) from the start of the buffer to begin
+     *               the upload.
+     * @param size   Size (bytes) to upload to the buffer.
+     * @param data   A pointer to the data to upload.
+     */
     void upload(GLintptr offset,
                 GLsizeiptr size,
                 const void* data) const;

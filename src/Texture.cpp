@@ -6,11 +6,6 @@ Texture::Texture() {
     glGenTextures(1, &texture_name);
 }
 
-Texture::Texture(const uint32_t unit_number)
-    : texture_unit(GL_TEXTURE0 + unit_number) {
-    glGenTextures(1, &texture_name);
-}
-
 Texture::~Texture() {
     glDeleteTextures(1, &texture_name);
 }
@@ -73,70 +68,6 @@ void Texture::upload(GLsizei width,
     unbind();
 }
 
-/*
-void Texture::allocate(GLsizei width, GLsizei height, uint32_t channels) const {
-    bind();
-
-    GLint internalformat;
-    GLenum format;
-
-    switch (channels) {
-    case 3:
-        internalformat = GL_RGB;
-        format = GL_RGB;
-        break;
-    case 4:
-        internalformat = GL_RGBA;
-        format = GL_RGBA;
-        break;
-    default:
-    // TODO: fix error msg
-        std::cout << "Invalid amount of channels to allocate, defaulting to 3." << std::endl;
-        internalformat = GL_RGB;
-        format = GL_RGB;
-    }
-
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGB,
-                 800,
-                 600,
-                 0,
-                 GL_RGB,
-                 GL_UNSIGNED_BYTE,
-                 NULL);
-    
-    unbind();
-}
-*/
-
-// void Texture::from_qoi(std::string filename) const {
-//     bind();
-
-//     qoi_desc image_desc;
-//     void* image_bytes = qoi_read(filename.c_str(), &image_desc, 0);
-//     if (image_bytes == NULL) {
-//         std::cout << "Failed to load image from the location: " << filename << std::endl;
-//     }
-
-//     GLint internal_format;
-//     GLenum format;
-
-//     switch (image_desc.channels) {
-//     case 3:
-//         internal_format = GL_RGB;
-//         format = GL_RGB;
-//         break;
-//     case 4:
-//         internal_format = GL_RGBA;
-//         format = GL_RGBA;
-//         break;
-//     default:
-//         std::cout << "Unknown amount of channels in QOI file while reading texture. Channels: " << image_desc.channels << std::endl;
-//         internal_format = GL_RGBA;
-//         format = GL_RGBA;
-//     }
-
 //     /* void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * data);
 //     * level:          Level-of-detail, specifying the 'n'th mipmap reduction.
 //     * internalformat: View documentation for all avaliable types. Base types {DEPTH_COMPONENT, DEPTH_STENCIL, RED, RG, RGB, RGBA} 
@@ -145,56 +76,6 @@ void Texture::allocate(GLsizei width, GLsizei height, uint32_t channels) const {
 //     * type:           View documentation for avaliable types. Typical types (UNSIGNED_[] - {BYTE, SHORT, INT}) or {HALF_FLOAT, FLOAT}
 //     * data:           A pointer to the data.
 //     */
-
-//     glTexImage2D(GL_TEXTURE_2D,
-//                  0,
-//                  internal_format,
-//                  image_desc.width,
-//                  image_desc.height,
-//                  0,
-//                  format,
-//                  GL_UNSIGNED_BYTE,
-//                  image_bytes);
-//     free(image_bytes);
-//     unbind();
-// }
-
-// void Texture::set_unit_from_file(const char *filename, int32_t width, int32_t height, const uint32_t texture_unit, const GLint internalformat, const GLenum format, const GLenum type, int32_t channels) {  
-//     if (texture_unit < total_units) {
-//         glActiveTexture(texture_unit + GL_TEXTURE0);
-//         bind(texture_unit);
-//         // stbi_uc *stbi_load(char const *filename, int *x, int *y, int *channels_in_file, int desired_channels);
-//         // channels_in_file: Force the number of channels in the file. 0 will auto detect.
-//         stbi_uc *image = stbi_load(filename, &width, &height, &channels, 0);
-//         if (image == NULL) {
-//             printf(LUNA_FILE_ERROR "Failed to load image in the location: %s\n", filename);
-//         }
-//         /* void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * data);
-//          * level:          Level-of-detail, specifying the 'n'th mipmap reduction.
-//          * internalformat: View documentation for all avaliable types. Base types {DEPTH_COMPONENT, DEPTH_STENCIL, RED, RG, RGB, RGBA} 
-//          * border:         Must be 0.
-//          * format:         ({RED, RG, RGB, BGR, RGBA} - []_INTEGER) or {STENCIL_INDEX, DEPTH_COMPONENT, DEPTH_STENCIL}
-//          * type:           View documentation for avaliable types. Typical types (UNSIGNED_[] - {BYTE, SHORT, INT}) or {HALF_FLOAT, FLOAT}
-//          * data:           A pointer to the data.
-//          */
-//         glTexImage2D(texture_type[texture_unit], 0, internalformat, width, height, 0, format, type, image);
-//         glGenerateMipmap(texture_type[texture_unit]);
-//         stbi_image_free(image);
-//         unbind(texture_unit);
-//     }
-//     // TODO: When total units are exceeded
-// }
-
-// void Texture::set_unit_from_buffer(void* buffer, int32_t width, int32_t height, const uint32_t texture_unit, const GLint internalformat, const GLenum format, const GLenum type, int32_t channels) {  
-//     if (texture_unit < total_units) {
-//         glActiveTexture(texture_unit + GL_TEXTURE0);
-//         bind(texture_unit);
-//         glTexImage2D(texture_type[texture_unit], 0, internalformat, width, height, 0, format, type, buffer);
-//         glGenerateMipmap(texture_type[texture_unit]);
-//         unbind(texture_unit);
-//     }
-//     // TODO: When total units are exceeded
-// }
 
 void Texture::set_mipmap_filter(GLint minify_filter,
                                 GLint magnify_filter) const {

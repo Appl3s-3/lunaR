@@ -434,7 +434,7 @@ int main(int argc, char** argv) {
             // glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL, i * 6);
         }
 
-        bricker_program.unbind();
+        bricker_program.uninstall();
         bricker_vao.unbind();
 
         // Swap buffers

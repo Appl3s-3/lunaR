@@ -1,4 +1,6 @@
 #include <cstdint>
+#include <sstream>
+#include <fstream>
 
 #include "luna/miniGL.h"
 #include "luna/Window.hpp"
@@ -12,10 +14,7 @@
 //     luna::OpenGlErrorCallback error = luna::OpenGlErrorCallback(source, type, id, severity, message);
 //     error.log();
 // }
-int main(int argc, char** argv) {
-    return 0;
-}
-/*
+
 int main(int argc, char** argv) {
     // Position vertices for an isoceles triangle
     float position_vertices[] = {
@@ -69,18 +68,39 @@ int main(int argc, char** argv) {
     triangle_vao.define_attribute(position_buffer, position_info, 0);
     triangle_vao.define_attribute(colour_buffer, colour_info, 0);
 
-    // use the ibo the the vao
-    triangle_vao.use();
-    indices_buffer.use();
+    // bind the ibo the the vao
+    triangle_vao.bind();
+    indices_buffer.bind();
     triangle_vao.unbind();
 
+    // shader sources
+    std::ifstream vertex_shader_file_stream = std::ifstream("../shaders/tests/triangle.vs");
+    std::stringstream vertex_shader_stream;
+    vertex_shader_stream << vertex_shader_file_stream.rdbuf();
+    std::string vertex_shader_body = vertex_shader_stream.str();
+
+    std::ifstream fragment_shader_file_stream = std::ifstream("../shaders/tests/triangle.fs");
+    std::stringstream fragment_shader_stream;
+    fragment_shader_stream << fragment_shader_file_stream.rdbuf();
+    std::string fragment_shader_body = fragment_shader_stream.str();
+
     // shaders
-    luna::Shader triangle_vs = luna::Shader(GL_VERTEX_SHADER, "../shaders/tests/triangle.vs");
-    luna::Shader triangle_fs = luna::Shader(GL_FRAGMENT_SHADER, "../shaders/tests/triangle.fs");
+    luna::Shader triangle_vs = luna::Shader(luna::ShaderType::VERTEX);
+    triangle_vs.append_source(vertex_shader_body);
+    triangle_vs.compile();
 
-    luna::Program traingle_shader_program = luna::Program(triangle_vs, triangle_fs);
-    traingle_shader_program.use();
+    luna::Shader triangle_fs = luna::Shader(luna::ShaderType::FRAGMENT);
+    triangle_fs.append_source(fragment_shader_body);
+    triangle_fs.compile();
 
+    // program
+    luna::Program triangle_program = luna::Program();
+    triangle_program.attach_shader(triangle_vs);
+    triangle_program.attach_shader(triangle_fs);
+    triangle_program.link();
+    triangle_program.use();
+
+    // touch ups
     window.clear_colour(0.1, 0.1, 0.1);
 
     // draw the triangle
@@ -88,7 +108,8 @@ int main(int argc, char** argv) {
         window.poll();
         
         window.clear();
-        triangle_vao.use();
+        triangle_vao.bind();
+        triangle_program.use();
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
         window.swap_buffers();
     }
@@ -97,5 +118,3 @@ int main(int argc, char** argv) {
     
     return 0;
 }
-
-*/

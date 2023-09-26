@@ -26,38 +26,49 @@ struct VertexAttributeInfo {
     GLsizei stride = 0;
 };
 
-// VertexArray
-// Manages an OpenGL Vertex Array Object (VAO)
+/**
+ * @brief Manages an OpenGL Vertex Array Object (VAO).
+ */
 class VertexArray {
 public:
-    // VertexArray Constructor
-    // Generates an OpenGL vertex array object
+    /**
+     * @brief Construct a new Vertex Array object.
+     * Generates an OpenGL vertex array object.
+     */
     VertexArray();
     
-    // VertexArray Destructor
-    // Deletes the vertex array object
+    /**
+     * @brief Destroy the Vertex Array object.
+     * Deletes the vertex array object.
+     */
     ~VertexArray();
 
-    // bind
-    // Binds the vertex array object
+    /**
+     * @brief Binds the vertex array object.
+     */
     void bind() const;
 
-    // unbind
-    // Unbinds all vertex array objects
+    /**
+     * @brief Unbinds all vertex array objects.
+     */
     static void unbind();
 
-    // name
-    // Returns the reference to the OpenGL vertex array as a GLuint
+    /**
+     * @brief Returns the reference to the OpenGL vertex array as a GLuint.
+     * 
+     * @return GLuint: The reference to the OpenGL vertex array.
+     */
     GLuint name() const;
 
-    // define_attribute
-    // Enables a vertex attribute for the vertex array object and binds a
-    // GL_ARRAY_BUFFER to the attribute.
-    // :: const BufferManager&       buffer :: The GL_ARRAY_BUFFER to source
-    //                                         vertex data from
-    // :: const VertexAttributeInfo& info   :: Vertex format information
-    // ::       uint64_t             offset :: Offset (bytes) from...
-    //                                         Defaults to 0
+    /**
+     * @brief Enables a vertex attribute for the vertex array object.
+     * Enables a vertex attribute for the vertex array object and binds a
+     * GL_ARRAY_BUFFER to the attribute.
+     * @param buffer The GL_ARRAY_BUFFER to source vertex data from.
+     * @param info   Vertex format information.
+     * @param offset Offset (bytes) of the attribute's first component from
+     *               the start of the buffer, defaults to 0.
+     */
     void define_attribute(const BufferManager& buffer,
                           const VertexAttributeInfo& info,
                           uint64_t offset = 0) const;
