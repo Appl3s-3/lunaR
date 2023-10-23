@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.5)
 
 # https://semver.org/
 project(LunaR VERSION 1.0.0)
@@ -53,6 +53,7 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory("${CMAKE_SOURCE_DIR}/dependencies/glfw")
 
+cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 
 # GLAD
