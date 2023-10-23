@@ -114,6 +114,12 @@ int main(int argc, char** argv) {
     // textures
     uint8_t texture_buffer[100 * 100 * 4];
 
+    for (int i = 0; i < 100; ++i) {
+        for (int j = 0; j < 20; ++j) {
+            texture_buffer[i * 100 * 4 + j * 5 * 4] = 255;
+        }
+    }
+
     luna::ImageFormat texture_info;
     texture_info.format = GL_RGBA;
     texture_info.internal_format = GL_RGBA;
