@@ -51,13 +51,13 @@ target_include_directories(luna
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory("${CMAKE_SOURCE_DIR}/dependencies/glfw")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glfw")
 
 cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 
 # GLAD
-add_library(glad STATIC "${CMAKE_SOURCE_DIR}/libs/glad/src/gl.c")
+add_library(glad STATIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/gl.c")
 target_include_directories(glad
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/libs/include"
