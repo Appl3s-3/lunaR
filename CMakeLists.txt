@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 # https://semver.org/
 project(LunaR VERSION 1.0.0)
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ### Options
 
 option(OP_LunaRTests "Create LunaR test files" ON)
@@ -15,7 +16,7 @@ set(LUNA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 ### Create a library target luna
 
-add_library(luna STATIC "")
+add_library(luna SHARED "")
 
 # Add source and header files to luna
 target_sources(luna
@@ -57,7 +58,7 @@ cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 
 # GLAD
-add_library(glad STATIC "${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/gl.c")
+add_library(glad SHARED "${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/src/gl.c")
 target_include_directories(glad
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/libs/include"
