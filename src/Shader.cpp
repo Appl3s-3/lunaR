@@ -9,6 +9,10 @@ Shader::Shader(const ShaderType type)
         shader_internal_type = GL_VERTEX_SHADER;
         break;
 
+    case ShaderType::GEOMETRY:
+        shader_internal_type = GL_GEOMETRY_SHADER;
+        break;
+
     case ShaderType::FRAGMENT:
         shader_internal_type = GL_FRAGMENT_SHADER;
         break;

@@ -11,6 +11,7 @@ namespace luna {
 
 enum class ShaderType {
     VERTEX = 0,
+    GEOMETRY,
     FRAGMENT
 };
 
